@@ -1,0 +1,26 @@
+---
+apiVersion: serving.knative.dev/v1alpha1
+kind: DomainMapping
+metadata:
+  name: kube.direct
+  namespace: kube-direct
+spec:
+  ref:
+    name: kube-direct
+    kind: Service
+    apiVersion: serving.knative.dev/v1
+  tls:
+    secretName: default-tls
+---
+apiVersion: serving.knative.dev/v1alpha1
+kind: DomainMapping
+metadata:
+  name: www.kube.direct
+  namespace: kube-direct
+spec:
+  ref:
+    name: kube-direct
+    kind: Service
+    apiVersion: serving.knative.dev/v1
+  tls:
+    secretName: default-tls

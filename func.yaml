@@ -1,0 +1,38 @@
+specVersion: 0.35.0
+name: kube-direct
+runtime: go
+registry: quay.io/saschagrunert
+image: quay.io/saschagrunert/kube-direct:latest
+imageDigest: sha256:6a41ca8dcc1c9f5895f5ca19ae269f331e8b6bafb667148b7de0c505429798e7
+created: 2023-05-30T13:51:40.854035058+02:00
+build:
+  buildpacks:
+  - paketo-buildpacks/go-dist
+  - ghcr.io/boson-project/go-function-buildpack:tip
+  builder: pack
+  buildEnvs: []
+run:
+  volumes: []
+  envs: []
+deploy:
+  namespace: kube-direct
+  remote: false
+  annotations: {}
+  options:
+    scale:
+      min: 1
+      max: 50
+      metric: concurrency
+      target: 75
+      utilization: 75
+    resources:
+      requests:
+        cpu: 100m
+        memory: 32Mi
+      limits:
+        cpu: 1000m
+        memory: 256Mi
+  labels: []
+  healthEndpoints:
+    liveness: /health/liveness
+    readiness: /health/readiness
