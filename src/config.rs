@@ -1,4 +1,4 @@
-use actix_web::{web::{self, Data}};
+use actix_web::web::{self, Data};
 
 /// Run custom configuration as part of the application building
 /// process.
