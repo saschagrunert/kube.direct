@@ -19,7 +19,7 @@ spec:
     - name: repo_url
     - name: revision
     tasks:
-    - name: fetch-repository
+    - name: checkout
       params:
       - name: url
         value: $(params.repo_url)
@@ -36,8 +36,10 @@ spec:
       params:
       - name: package
         value: .
+      - name: version
+        value: v1.53.2
       runAfter:
-      - fetch-repository
+      - checkout
       taskRef:
         name: golangci-lint
       workspaces:
