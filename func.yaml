@@ -32,6 +32,4 @@ deploy:
         cpu: 1000m
         memory: 256Mi
   labels: []
-  healthEndpoints:
-    liveness: /health/liveness
-    readiness: /health/readiness
+  pvcSize: 256Mi
