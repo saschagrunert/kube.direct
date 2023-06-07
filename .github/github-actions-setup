@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euox pipefail
+
+FUNC_VERSION=v1.10.0
+
+curl_retry() {
+    curl -sSfL --retry 5 --retry-delay 3 "$@"
+}
+
+install_func() {
+    DEST=/usr/local/bin/func
+    curl_retry https://github.com/knative/func/releases/download/knative-$FUNC_VERSION/func_linux_amd64 -o $DEST
+    chmod +x $DEST
+    func version
+}
+
+install_func
