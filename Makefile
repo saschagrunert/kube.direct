@@ -6,18 +6,8 @@ all: build
 
 .PHONY: build
 build:
-	$(KN) func build --verbose
-
-.PHONY: push
-push:
-	$(KN) func build --verbose --push
+	$(KN) func build -v
 
 .PHONY: deploy
 deploy:
-	$(KN) func deploy -n $(NAMESPACE) -b pack
-	$(KUBECTL) apply -f deploy/domainmapping.yaml
-
-.PHONY: delete
-delete:
-	$(KN) func delete -n $(NAMESPACE)
-	$(KUBECTL) delete -f deploy/domainmapping.yaml
+	$(KN) func deploy -v -n $(NAMESPACE) -b pack
