@@ -4,14 +4,18 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 permissions: {}
 
 jobs:
   func:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v3
+      - uses: sigstore/cosign-installer@v3
       - run: sudo .github/github-actions-setup
       - name: Login to Quay.io
         run: docker login -u saschagrunert+github -p ${{ secrets.QUAY_PASSWORD }} quay.io
@@ -20,3 +24,4 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
       - run: make deploy
+      - run: cosign sign -y quay.io/saschagrunert/kube.direct
