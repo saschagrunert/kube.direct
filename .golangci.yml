@@ -97,6 +97,7 @@ linters:
     - wastedassign
     - whitespace
     - wrapcheck
+    - zerologlint
     # - wsl
 linters-settings:
   forbidigo:
