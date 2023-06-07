@@ -6,7 +6,11 @@ all: build
 
 .PHONY: build
 build:
-	$(KN) func build
+	$(KN) func build --verbose
+
+.PHONY: push
+push:
+	$(KN) func build --verbose --push
 
 .PHONY: deploy
 deploy:
