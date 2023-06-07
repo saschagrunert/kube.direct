@@ -3,7 +3,7 @@ name: kube-direct
 runtime: go
 registry: quay.io/saschagrunert
 image: quay.io/saschagrunert/kube-direct:latest
-imageDigest: sha256:6a41ca8dcc1c9f5895f5ca19ae269f331e8b6bafb667148b7de0c505429798e7
+imageDigest: ""
 created: 2023-05-30T13:51:40.854035058+02:00
 build:
   buildpacks:
