@@ -1,4 +1,5 @@
 use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer};
+use actix_web_static_files::ResourceFiles;
 use env_logger::{Builder, Env};
 use std::{
     env,
@@ -9,6 +10,8 @@ use std::{
 mod config;
 mod handler;
 mod template;
+
+include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
 #[actix_web::main]
 async fn main() -> Result<()> {
@@ -25,6 +28,7 @@ async fn main() -> Result<()> {
     HttpServer::new(|| {
         App::new()
             .wrap(Logger::default())
+            .service(ResourceFiles::new("/static", generate()))
             .configure(config::configure)
             .route("/", web::get().to(handler::index))
             .route("/", web::post().to(handler::index))

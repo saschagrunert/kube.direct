@@ -87,3 +87,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: crate-ci/typos@v1.14.12
+        with:
+          config: .typos.toml
