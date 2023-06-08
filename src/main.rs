@@ -13,7 +13,7 @@ mod handler;
 async fn main() -> Result<()> {
     Builder::from_env(Env::default().default_filter_or("info")).init();
 
-    let port: u16 = match env::var("PORT") {
+    let port = match env::var("PORT") {
         Ok(v) => v
             .parse()
             .map_err(|e: ParseIntError| Error::new(ErrorKind::Other, e.to_string()))?,
