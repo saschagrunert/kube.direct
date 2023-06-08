@@ -1,7 +1,7 @@
 version: 2
 updates:
 - package-ecosystem: cargo
-  directory: "/"
+  directory: "/frontend"
   schedule:
     interval: daily
     time: "11:00"
@@ -9,6 +9,11 @@ updates:
   allow:
   - dependency-type: direct
   - dependency-type: indirect
+- package-ecosystem: gomod
+  directory: "/backend"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
