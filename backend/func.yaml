@@ -17,7 +17,8 @@ run:
 deploy:
   namespace: kube-direct
   remote: false
-  annotations: {}
+  annotations:
+    serving.knative.openshift.io/disableRoute: "true"
   options:
     scale:
       min: 1
