@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -euox pipefail
 
-DIGEST=$(sed -n 's/imageDigest: \(.*\)/\1/p' frontend/func.yaml)
-cosign sign -y "quay.io/saschagrunert/kube-direct/frontend@$DIGEST"
+DIGEST=$(sed -n 's/imageDigest: \(.*\)/\1/p' "$1/func.yaml")
+cosign sign -y "quay.io/saschagrunert/kube-direct/$1@$DIGEST"
