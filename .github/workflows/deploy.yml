@@ -10,6 +10,8 @@ permissions: {}
 jobs:
   frontend:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v3
       - run: sudo .github/github-actions-setup
@@ -21,3 +23,5 @@ jobs:
           echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
       - run: make deploy
         working-directory: frontend
+      - uses: sigstore/cosign-installer@v3
+      - run: .github/sign-image
