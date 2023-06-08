@@ -27,10 +27,10 @@ deploy:
     resources:
       requests:
         cpu: 100m
-        memory: 32Mi
+        memory: 20Mi
       limits:
-        cpu: 1000m
-        memory: 256Mi
+        cpu: 500m
+        memory: 100Mi
   labels: []
   healthEndpoints:
     liveness: /health/liveness
