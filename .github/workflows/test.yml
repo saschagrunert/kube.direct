@@ -9,14 +9,17 @@ on:
 permissions: {}
 
 jobs:
-  func:
+  frontend-func:
+    name: frontend / func
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - run: sudo .github/github-actions-setup
       - run: make build
+        working-directory: frontend
 
-  clippy:
+  frontend-clippy:
+    name: frontend / clippy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -37,8 +40,10 @@ jobs:
           components: clippy
       - name: Clippy
         run: cargo +nightly clippy --all-targets --all-features -- -D warnings
+        working-directory: frontend
 
-  rustfmt:
+  frontend-rustfmt:
+    name: frontend / rustfmt
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,8 +56,10 @@ jobs:
           override: true
       - name: Rustfmt
         run: cargo fmt && git diff --exit-code
+        working-directory: frontend
 
-  unit:
+  frontend-unit:
+    name: frontend / unit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -73,6 +80,7 @@ jobs:
           override: true
       - name: Unit tests
         run: cargo test --no-fail-fast
+        working-directory: frontend
 
   typos:
     runs-on: ubuntu-latest

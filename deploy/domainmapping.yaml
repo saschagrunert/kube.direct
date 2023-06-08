@@ -6,7 +6,7 @@ metadata:
   namespace: kube-direct
 spec:
   ref:
-    name: kube-direct
+    name: frontend
     kind: Service
     apiVersion: serving.knative.dev/v1
   tls:
@@ -19,7 +19,7 @@ metadata:
   namespace: kube-direct
 spec:
   ref:
-    name: kube-direct
+    name: frontend
     kind: Service
     apiVersion: serving.knative.dev/v1
   tls:
