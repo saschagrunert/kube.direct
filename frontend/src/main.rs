@@ -8,6 +8,7 @@ use std::{
 
 mod config;
 mod handler;
+mod template;
 
 #[actix_web::main]
 async fn main() -> Result<()> {
