@@ -8,8 +8,7 @@ on:
 permissions: {}
 
 jobs:
-  run:
-    name: Build / Push / Deploy / Sign
+  push:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
