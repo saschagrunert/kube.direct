@@ -1,18 +1,25 @@
-use crate::{config::HandlerConfig, template::Index};
+use crate::{api::HelloRequest, config::HandlerConfig, template::Index};
 use actix_web::{web::Data, HttpRequest, Responder, Result};
 use actix_web_lab::respond::Html;
 use askama::Template;
-use log::debug;
-use std::io::{self, ErrorKind};
+use log::{debug, info};
+use std::io::{Error as IOError, ErrorKind};
+use tonic::Request;
 
-pub async fn index(req: HttpRequest, _: Data<HandlerConfig>) -> Result<impl Responder> {
-    debug!("{:#?}", req);
+macro_rules! io_err {
+    ($x:expr) => {
+        $x.map_err(|e| IOError::new(ErrorKind::Other, e.to_string()))?
+    };
+}
 
-    let html = Index {
-        name: "kube.direct",
-    }
-    .render()
-    .map_err(|e| io::Error::new(ErrorKind::Other, e.to_string()))?;
+pub async fn index(req: HttpRequest, cfg: Data<HandlerConfig>) -> Result<impl Responder> {
+    debug!("Got request: {:#?}", req);
 
+    let request = Request::new(HelloRequest { name: "foo".into() });
+    let mut client = cfg.client.write().await;
+    let response = io_err!(client.say_hello(request).await);
+    info!("Got response {:?}", response);
+
+    let html = io_err!(Index { name: &cfg.name }.render());
     Ok(Html(html))
 }
