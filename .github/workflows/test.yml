@@ -35,15 +35,7 @@ jobs:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
-            ~/.cargo/registry
-            ~/.cargo/git
-            frontend/target
-          key: ${{ runner.os }}-api-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          override: true
+          key: ${{ runner.os }}-go-api-${{ hashFiles('**/Cargo.lock') }}
       - run: sudo .github/github-actions-setup
       - run: make verify-api
 
@@ -67,15 +59,15 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            frontend/target
+            target
           key: ${{ runner.os }}-cargo-clippy-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions-rs/toolchain@v1
+      - name: Select Toolchain
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           default: true
           override: true
           components: clippy
-      - run: sudo .github/github-actions-setup
       - name: Clippy
         run: cargo +nightly clippy --all-targets --all-features -- -D warnings
         working-directory: frontend
@@ -86,7 +78,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - name: Select Toolchain
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           default: true
@@ -107,9 +100,10 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            frontend/target
+            target
           key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions-rs/toolchain@v1
+      - name: Select Toolchain
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           default: true
