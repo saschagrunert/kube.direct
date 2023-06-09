@@ -3,16 +3,21 @@ use actix_web::{web::Data, HttpRequest, Responder, Result};
 use actix_web_lab::respond::Html;
 use askama::Template;
 use log::debug;
-use std::io::{self, ErrorKind};
+use std::io::{Error as IOError, ErrorKind};
+
+macro_rules! io_err {
+    ($x:expr) => {
+        $x.map_err(|e| IOError::new(ErrorKind::Other, e.to_string()))?
+    };
+}
 
 pub async fn index(req: HttpRequest, _: Data<HandlerConfig>) -> Result<impl Responder> {
     debug!("{:#?}", req);
 
-    let html = Index {
+    let html = io_err!(Index {
         name: "kube.direct",
     }
-    .render()
-    .map_err(|e| io::Error::new(ErrorKind::Other, e.to_string()))?;
+    .render());
 
     Ok(Html(html))
 }
