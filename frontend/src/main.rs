@@ -1,4 +1,4 @@
-//use crate::api::greeter_client::GreeterClient;
+use crate::api::greeter_client::GreeterClient;
 use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer};
 use actix_web_static_files::ResourceFiles;
 use anyhow::{Context, Result};
@@ -23,18 +23,16 @@ async fn main() -> Result<()> {
     };
 
     info!("Connecting to gRPC server");
-    /*
     let client = GreeterClient::connect("http://backend:50051")
         .await
         .context("connect to gRPC server")?;
-    */
 
     info!("Starting web server");
     HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
             .service(ResourceFiles::new("/static", generate()))
-            .configure(|sc| config::configure(sc, None /* client.clone() */))
+            .configure(|sc| config::configure(sc, client.clone()))
             .route("/", web::get().to(handler::index))
             .route("/", web::post().to(handler::index))
             .route(
