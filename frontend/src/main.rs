@@ -1,11 +1,8 @@
 use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer};
 use actix_web_static_files::ResourceFiles;
+use anyhow::{Context, Result};
 use env_logger::{Builder, Env};
-use std::{
-    env,
-    io::{Error, ErrorKind, Result},
-    num::ParseIntError,
-};
+use std::env;
 
 mod config;
 mod handler;
@@ -18,9 +15,7 @@ async fn main() -> Result<()> {
     Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let port = match env::var("PORT") {
-        Ok(v) => v
-            .parse()
-            .map_err(|e: ParseIntError| Error::new(ErrorKind::Other, e.to_string()))?,
+        Ok(v) => v.parse::<u16>().context("parse PORT env variable")?,
         Err(_) => 8080,
     };
 
@@ -41,4 +36,5 @@ async fn main() -> Result<()> {
     .workers(1)
     .run()
     .await
+    .context("run http server")
 }
