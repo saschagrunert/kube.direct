@@ -20,6 +20,25 @@ jobs:
         with:
           config: .typos.toml
 
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make verify-dependencies
+
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-api-${{ hashFiles('**/Cargo.lock') }}
+      - run: sudo .github/github-actions-setup
+      - run: make verify-api
+
   frontend-func:
     name: frontend / func
     runs-on: ubuntu-latest
