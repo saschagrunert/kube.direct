@@ -17,8 +17,10 @@ pub async fn index(req: HttpRequest, cfg: Data<HandlerConfig>) -> Result<impl Re
 
     let request = Request::new(HelloRequest { name: "foo".into() });
     let mut client = cfg.client.write().await;
-    let response = io_err!(client.say_hello(request).await);
-    info!("Got response {:?}", response);
+    if let Some(c) = client.as_mut() {
+        let response = io_err!(c.say_hello(request).await);
+        info!("Got response {:?}", response);
+    }
 
     let html = io_err!(Index { name: &cfg.name }.render());
     Ok(Html(html))

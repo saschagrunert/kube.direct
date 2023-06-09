@@ -6,10 +6,10 @@ use tonic::transport::Channel;
 
 pub struct HandlerConfig {
     pub name: String,
-    pub client: RwLock<GreeterClient<Channel>>,
+    pub client: RwLock<Option<GreeterClient<Channel>>>,
 }
 
-pub fn configure(cfg: &mut ServiceConfig, client: GreeterClient<Channel>) {
+pub fn configure(cfg: &mut ServiceConfig, client: Option<GreeterClient<Channel>>) {
     info!("Configuring service");
     cfg.app_data(Data::new(HandlerConfig {
         name: "kube.direct".into(),
