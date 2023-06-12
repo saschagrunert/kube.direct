@@ -133,11 +133,6 @@ jobs:
           go test -v ./... -test.coverprofile=cov.out
           go tool cover -html cov.out -o cov.html
         working-directory: backend
-      - uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: cov.out
-          working-directory: backend
       - uses: actions/upload-artifact@v3
         with:
           name: coverage
