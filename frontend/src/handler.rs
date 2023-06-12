@@ -11,13 +11,10 @@ macro_rules! io_err {
     };
 }
 
-pub async fn index(req: HttpRequest, _: Data<HandlerConfig>) -> Result<impl Responder> {
+pub async fn index(req: HttpRequest, cfg: Data<HandlerConfig>) -> Result<impl Responder> {
     debug!("{:#?}", req);
 
-    let html = io_err!(Index {
-        name: "kube.direct",
-    }
-    .render());
+    let html = io_err!(Index { name: &cfg.name }.render());
 
     Ok(Html(html))
 }
