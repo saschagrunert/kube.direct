@@ -9,7 +9,7 @@ pub struct HandlerConfig {
 impl Default for HandlerConfig {
     fn default() -> HandlerConfig {
         HandlerConfig {
-            name: "world".into(),
+            name: "kube.direct".into(),
         }
     }
 }
