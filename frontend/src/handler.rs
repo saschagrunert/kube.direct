@@ -14,7 +14,10 @@ macro_rules! io_err {
 pub async fn index(req: HttpRequest, cfg: Data<HandlerConfig>) -> Result<impl Responder> {
     debug!("{:#?}", req);
 
-    let html = io_err!(Index { name: &cfg.name }.render());
+    let index = Index {
+        title: &cfg.title,
+        ..Default::default()
+    };
 
-    Ok(Html(html))
+    Ok(Html(io_err!(index.render())))
 }

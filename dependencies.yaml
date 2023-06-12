@@ -5,6 +5,8 @@ dependencies:
     refPaths:
       - path: backend/go.mod
         match: go
+      - path: .github/workflows/test.yml
+        match: GO_VERSION
 
   - name: zeitgeist
     version: 0.4.1

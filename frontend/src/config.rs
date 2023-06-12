@@ -3,13 +3,13 @@ use log::info;
 
 #[derive(Clone)]
 pub struct HandlerConfig {
-    pub name: String,
+    pub title: String,
 }
 
 impl Default for HandlerConfig {
     fn default() -> HandlerConfig {
         HandlerConfig {
-            name: "kube.direct".into(),
+            title: "kube.direct".into(),
         }
     }
 }
