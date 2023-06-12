@@ -1,23 +1,36 @@
-use crate::{config::HandlerConfig, template::Index};
-use actix_web::{web::Data, HttpRequest, Responder, Result};
+use crate::{config::HandlerConfig, error::Error, template::Index};
+use actix_web::{web::Data, HttpRequest, Responder};
 use actix_web_lab::respond::Html;
+use anyhow::Context;
 use askama::Template;
-use log::debug;
-use std::io::{Error as IOError, ErrorKind};
+use log::{debug, info};
+use serde::Deserialize;
+use std::result::Result;
 
-macro_rules! io_err {
-    ($x:expr) => {
-        $x.map_err(|e| IOError::new(ErrorKind::Other, e.to_string()))?
-    };
+const BACKEND_URL: &str = "http://backend.kube-direct";
+
+#[derive(Debug, Deserialize)]
+pub struct BackendData {
+    nodes: usize,
+    kubernetes_version: String,
 }
 
-pub async fn index(req: HttpRequest, cfg: Data<HandlerConfig>) -> Result<impl Responder> {
+pub async fn index(req: HttpRequest, cfg: Data<HandlerConfig>) -> Result<impl Responder, Error> {
     debug!("{:#?}", req);
+
+    let resp = reqwest::get(BACKEND_URL)
+        .await
+        .context("get backend data")?
+        .json::<BackendData>()
+        .await
+        .context("parse JSON")?;
+    info!("Got backend data: {:#?}", resp);
 
     let index = Index {
         title: &cfg.title,
-        ..Default::default()
+        nodes: resp.nodes,
+        kubernetes_version: &resp.kubernetes_version,
     };
 
-    Ok(Html(io_err!(index.render())))
+    Ok(Html(index.render().context("render index")?))
 }
