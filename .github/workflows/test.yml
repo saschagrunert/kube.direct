@@ -135,7 +135,8 @@ jobs:
         working-directory: backend
       - uses: codecov/codecov-action@v3
         with:
-          files: backend/cov.out
+          files: cov.out
+          working-directory: backend
       - uses: actions/upload-artifact@v3
         with:
           name: coverage
