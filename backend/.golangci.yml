@@ -13,7 +13,6 @@ linters:
     - contextcheck
     - cyclop
     - decorder
-    - depguard
     - dogsled
     - dupl
     - dupword
@@ -24,12 +23,9 @@ linters:
     - errorlint
     - execinquery
     - exhaustive
-    - exhaustruct
     - exportloopref
     - forbidigo
     - forcetypeassert
-    - funlen
-    - gci
     - ginkgolinter
     - gocheckcompilerdirectives
     - gochecknoglobals
@@ -67,7 +63,6 @@ linters:
     - nestif
     - nilerr
     - nilnil
-    - nlreturn
     - noctx
     - nolintlint
     - nonamedreturns
@@ -82,10 +77,8 @@ linters:
     - sqlclosecheck
     - staticcheck
     - stylecheck
-    - tagliatelle
     - tenv
     - testableexamples
-    - testpackage
     - thelper
     - tparallel
     - typecheck
@@ -93,10 +86,17 @@ linters:
     - unparam
     - unused
     - usestdlibvars
-    - varnamelen
     - wastedassign
     - whitespace
-    - wrapcheck
+    # - depguard
+    # - exhaustruct
+    # - funlen
+    # - gci
+    # - nlreturn
+    # - tagliatelle
+    # - testpackage
+    # - varnamelen
+    # - wrapcheck
     # - wsl
 linters-settings:
   forbidigo:

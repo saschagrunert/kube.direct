@@ -2,30 +2,85 @@ package function
 
 import (
 	"context"
-	"fmt"
-	"io"
+	"encoding/json"
+	"log"
 	"net/http"
-	"os"
 )
 
-// Handle an HTTP Request.
-func Handle(_ context.Context, res http.ResponseWriter, req *http.Request) {
-	/*
-	 * YOUR CODE HERE
-	 *
-	 * Try running `go test`.  Add more test as you code in `handle_test.go`.
-	 */
-
-	fmt.Println("Received request")
-	prettyPrint(req, os.Stdout) // echo to local output
-	prettyPrint(req, res)
+// Handle is the entrypoint of the go function.
+func Handle(ctx context.Context, res http.ResponseWriter, req *http.Request) {
+	NewHandler().Handle(ctx, res, req)
 }
 
-func prettyPrint(req *http.Request, w io.Writer) {
-	fmt.Fprintf(w, "%v %v %v %v\n", req.Method, req.URL, req.Proto, req.Host)
-	for k, vv := range req.Header {
-		for _, v := range vv {
-			fmt.Fprintf(w, "  %v: %v\n", k, v)
-		}
+// Data is the data returned to the API user.
+type Data struct {
+	Nodes             int    `json:"nodes"`
+	KubernetesVersion string `json:"kubernetes_version"`
+}
+
+type Handler struct {
+	impl
+}
+
+func NewHandler() *Handler {
+	return &Handler{
+		impl: &defaultImpl{},
+	}
+}
+
+// Handle the HTTP request.
+func (h *Handler) Handle(ctx context.Context, res http.ResponseWriter, req *http.Request) {
+	log.Printf("Received request: %+v", req)
+
+	if req.Method != http.MethodGet {
+		res.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	config, err := h.InClusterConfig()
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	client, err := h.NewForConfig(config)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	discoveryClient, err := h.NewDiscoveryClientForConfig(config)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	nodeList, err := h.ListNodes(ctx, client)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	nodes := nodeList.Items
+
+	if len(nodes) == 0 {
+		http.Error(res, "node list is empty", http.StatusInternalServerError)
+		return
+	}
+
+	version, err := h.ServerVersion(discoveryClient)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := Data{
+		Nodes:             len(nodes),
+		KubernetesVersion: version.String(),
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	if err := h.EncodeJSON(json.NewEncoder(res), &data); err != nil {
+		http.Error(res, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }

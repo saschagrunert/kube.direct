@@ -8,6 +8,7 @@ on:
 
 env:
   GOLANGCI_LINT_VERSION: v1.53.2
+  GO_VERSION: '1.20'
 
 permissions: {}
 
@@ -40,8 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Cache
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -54,33 +54,28 @@ jobs:
           default: true
           override: true
           components: clippy
-      - name: Clippy
-        run: cargo +nightly clippy --all-targets --all-features -- -D warnings
+      - run: cargo +nightly clippy --all-targets --all-features -- -D warnings
         working-directory: frontend
 
   frontend-rustfmt:
     name: frontend / rustfmt
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           default: true
           override: true
-      - name: Rustfmt
-        run: cargo fmt && git diff --exit-code
+      - run: cargo fmt && git diff --exit-code
         working-directory: frontend
 
   frontend-unit:
     name: frontend / unit
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Cache
-        uses: actions/cache@v3
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
@@ -92,8 +87,7 @@ jobs:
           toolchain: stable
           default: true
           override: true
-      - name: Unit tests
-        run: cargo test --no-fail-fast
+      - run: cargo test --no-fail-fast
         working-directory: frontend
 
   backend-func:
@@ -110,8 +104,57 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: sudo .github/github-actions-setup
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-lint-${{ hashFiles('**/go.sum') }}
       - uses: golangci/golangci-lint-action@v3
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           working-directory: backend
+
+  backend-unit:
+    name: backend / unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-unit-${{ hashFiles('**/go.sum') }}
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - run: |
+          go test -v ./... -test.coverprofile=cov.out
+          go tool cover -html cov.out -o cov.html
+        working-directory: backend
+      - uses: codecov/codecov-action@v3
+        with:
+          files: backend/cov.out
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: backend/cov.*
+
+  backend-mocks:
+    name: backend / mocks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-mocks-${{ hashFiles('**/go.sum') }}
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - run: go generate ./...
+        working-directory: backend
+      - run: .github/tree-status
