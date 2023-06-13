@@ -14,8 +14,11 @@ func Handle(ctx context.Context, res http.ResponseWriter, req *http.Request) {
 
 // Data is the data returned to the API user.
 type Data struct {
-	Nodes             int    `json:"nodes"`
-	KubernetesVersion string `json:"kubernetes_version"`
+	Nodes                   int    `json:"nodes,omitempty"`
+	KubernetesVersion       string `json:"kubernetes_version,omitempty"`
+	OSImage                 string `json:"os_image,omitempty"`
+	KernelVersion           string `json:"kernel_version,omitempty"`
+	ContainerRuntimeVersion string `json:"container_runtime_version,omitempty"`
 }
 
 type Handler struct {
@@ -73,9 +76,13 @@ func (h *Handler) Handle(ctx context.Context, res http.ResponseWriter, req *http
 		return
 	}
 
+	nodeInfo := nodes[0].Status.NodeInfo
 	data := Data{
-		Nodes:             len(nodes),
-		KubernetesVersion: version.String(),
+		Nodes:                   len(nodes),
+		KubernetesVersion:       version.String(),
+		OSImage:                 nodeInfo.OSImage,
+		KernelVersion:           nodeInfo.KernelVersion,
+		ContainerRuntimeVersion: nodeInfo.ContainerRuntimeVersion,
 	}
 
 	res.Header().Set("Content-Type", "application/json")
