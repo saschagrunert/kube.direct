@@ -13,6 +13,9 @@ const BACKEND_URL: &str = "http://backend.kube-direct";
 pub struct BackendData {
     nodes: usize,
     kubernetes_version: String,
+    os_image: String,
+    kernel_version: String,
+    container_runtime_version: String,
 }
 
 pub async fn index(req: HttpRequest, cfg: Data<HandlerConfig>) -> Result<impl Responder, Error> {
@@ -24,12 +27,15 @@ pub async fn index(req: HttpRequest, cfg: Data<HandlerConfig>) -> Result<impl Re
         .json::<BackendData>()
         .await
         .context("parse JSON")?;
-    info!("Got backend data: {:#?}", resp);
+    info!("Got backend data: {:?}", resp);
 
     let index = Index {
         title: &cfg.title,
         nodes: resp.nodes,
         kubernetes_version: &resp.kubernetes_version,
+        os_image: &resp.os_image,
+        kernel_version: &resp.kernel_version,
+        container_runtime_version: &resp.container_runtime_version,
     };
 
     Ok(Html(index.render().context("render index")?))
