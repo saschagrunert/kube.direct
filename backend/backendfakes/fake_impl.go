@@ -15,15 +15,15 @@ import (
 )
 
 type FakeImpl struct {
-	InClusterConfigStub        func() (*rest.Config, error)
-	inClusterConfigMutex       sync.RWMutex
-	inClusterConfigArgsForCall []struct {
+	ClusterConfigStub        func() (*rest.Config, error)
+	clusterConfigMutex       sync.RWMutex
+	clusterConfigArgsForCall []struct {
 	}
-	inClusterConfigReturns struct {
+	clusterConfigReturns struct {
 		result1 *rest.Config
 		result2 error
 	}
-	inClusterConfigReturnsOnCall map[int]struct {
+	clusterConfigReturnsOnCall map[int]struct {
 		result1 *rest.Config
 		result2 error
 	}
@@ -111,15 +111,15 @@ type FakeImpl struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeImpl) InClusterConfig() (*rest.Config, error) {
-	fake.inClusterConfigMutex.Lock()
-	ret, specificReturn := fake.inClusterConfigReturnsOnCall[len(fake.inClusterConfigArgsForCall)]
-	fake.inClusterConfigArgsForCall = append(fake.inClusterConfigArgsForCall, struct {
+func (fake *FakeImpl) ClusterConfig() (*rest.Config, error) {
+	fake.clusterConfigMutex.Lock()
+	ret, specificReturn := fake.clusterConfigReturnsOnCall[len(fake.clusterConfigArgsForCall)]
+	fake.clusterConfigArgsForCall = append(fake.clusterConfigArgsForCall, struct {
 	}{})
-	stub := fake.InClusterConfigStub
-	fakeReturns := fake.inClusterConfigReturns
-	fake.recordInvocation("InClusterConfig", []interface{}{})
-	fake.inClusterConfigMutex.Unlock()
+	stub := fake.ClusterConfigStub
+	fakeReturns := fake.clusterConfigReturns
+	fake.recordInvocation("ClusterConfig", []interface{}{})
+	fake.clusterConfigMutex.Unlock()
 	if stub != nil {
 		return stub()
 	}
@@ -129,39 +129,39 @@ func (fake *FakeImpl) InClusterConfig() (*rest.Config, error) {
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeImpl) InClusterConfigCallCount() int {
-	fake.inClusterConfigMutex.RLock()
-	defer fake.inClusterConfigMutex.RUnlock()
-	return len(fake.inClusterConfigArgsForCall)
+func (fake *FakeImpl) ClusterConfigCallCount() int {
+	fake.clusterConfigMutex.RLock()
+	defer fake.clusterConfigMutex.RUnlock()
+	return len(fake.clusterConfigArgsForCall)
 }
 
-func (fake *FakeImpl) InClusterConfigCalls(stub func() (*rest.Config, error)) {
-	fake.inClusterConfigMutex.Lock()
-	defer fake.inClusterConfigMutex.Unlock()
-	fake.InClusterConfigStub = stub
+func (fake *FakeImpl) ClusterConfigCalls(stub func() (*rest.Config, error)) {
+	fake.clusterConfigMutex.Lock()
+	defer fake.clusterConfigMutex.Unlock()
+	fake.ClusterConfigStub = stub
 }
 
-func (fake *FakeImpl) InClusterConfigReturns(result1 *rest.Config, result2 error) {
-	fake.inClusterConfigMutex.Lock()
-	defer fake.inClusterConfigMutex.Unlock()
-	fake.InClusterConfigStub = nil
-	fake.inClusterConfigReturns = struct {
+func (fake *FakeImpl) ClusterConfigReturns(result1 *rest.Config, result2 error) {
+	fake.clusterConfigMutex.Lock()
+	defer fake.clusterConfigMutex.Unlock()
+	fake.ClusterConfigStub = nil
+	fake.clusterConfigReturns = struct {
 		result1 *rest.Config
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeImpl) InClusterConfigReturnsOnCall(i int, result1 *rest.Config, result2 error) {
-	fake.inClusterConfigMutex.Lock()
-	defer fake.inClusterConfigMutex.Unlock()
-	fake.InClusterConfigStub = nil
-	if fake.inClusterConfigReturnsOnCall == nil {
-		fake.inClusterConfigReturnsOnCall = make(map[int]struct {
+func (fake *FakeImpl) ClusterConfigReturnsOnCall(i int, result1 *rest.Config, result2 error) {
+	fake.clusterConfigMutex.Lock()
+	defer fake.clusterConfigMutex.Unlock()
+	fake.ClusterConfigStub = nil
+	if fake.clusterConfigReturnsOnCall == nil {
+		fake.clusterConfigReturnsOnCall = make(map[int]struct {
 			result1 *rest.Config
 			result2 error
 		})
 	}
-	fake.inClusterConfigReturnsOnCall[i] = struct {
+	fake.clusterConfigReturnsOnCall[i] = struct {
 		result1 *rest.Config
 		result2 error
 	}{result1, result2}
@@ -561,8 +561,8 @@ func (fake *FakeImpl) WriteReturnsOnCall(i int, result1 int, result2 error) {
 func (fake *FakeImpl) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.inClusterConfigMutex.RLock()
-	defer fake.inClusterConfigMutex.RUnlock()
+	fake.clusterConfigMutex.RLock()
+	defer fake.clusterConfigMutex.RUnlock()
 	fake.listNodesMutex.RLock()
 	defer fake.listNodesMutex.RUnlock()
 	fake.marshalMutex.RLock()

@@ -18,6 +18,7 @@ strip = "symbols"
 [features]
 default   = []
 gen-proto = ["dep:prost-build"]
+local = []
 
 [dependencies]
 actix-rt = "2.8.0"

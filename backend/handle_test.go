@@ -130,9 +130,9 @@ func TestRun(t *testing.T) {
 			},
 		},
 		{
-			name: "failure get in cluster config",
+			name: "failure get cluster config",
 			prepare: func(mock *backendfakes.FakeImpl) string {
-				mock.InClusterConfigReturns(nil, errTest)
+				mock.ClusterConfigReturns(nil, errTest)
 
 				return http.MethodGet
 			},

@@ -9,7 +9,7 @@ pub struct Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        self.err.fmt(f)
+        write!(f, "{:#}", self.err)
     }
 }
 
