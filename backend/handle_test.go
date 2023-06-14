@@ -2,7 +2,6 @@ package function
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"function/backendfakes"
 	"io"
@@ -29,23 +28,38 @@ func TestRun(t *testing.T) {
 			prepare: func(mock *backendfakes.FakeImpl) string {
 				mock.ListNodesReturns(&v1.NodeList{Items: []v1.Node{{}, {}}}, nil)
 				mock.ServerVersionReturns(&version.Info{GitVersion: "1.2.3"}, nil)
-				mock.EncodeJSONCalls(func(e *json.Encoder, d any) error {
-					return e.Encode(d)
+				mock.MarshalReturns([]byte("test"), nil)
+				mock.WriteCalls(func(w http.ResponseWriter, b []byte) (int, error) {
+					return w.Write(b)
 				})
 
 				return http.MethodGet
 			},
 			assert: func(res *http.Response, body string) {
 				assert.Equal(t, http.StatusOK, res.StatusCode)
-				assert.Contains(t, body, `{"nodes":2,"kubernetes_version":"1.2.3"}`)
+				assert.Contains(t, body, "test")
 			},
 		},
 		{
-			name: "failure write JSON response",
+			name: "failure write response",
 			prepare: func(mock *backendfakes.FakeImpl) string {
 				mock.ListNodesReturns(&v1.NodeList{Items: []v1.Node{{}}}, nil)
 				mock.ServerVersionReturns(&version.Info{}, nil)
-				mock.EncodeJSONReturns(errTest)
+				mock.WriteReturns(0, errTest)
+
+				return http.MethodGet
+			},
+			assert: func(res *http.Response, body string) {
+				assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+				assert.Contains(t, body, errTest.Error())
+			},
+		},
+		{
+			name: "failure marshal data",
+			prepare: func(mock *backendfakes.FakeImpl) string {
+				mock.ListNodesReturns(&v1.NodeList{Items: []v1.Node{{}}}, nil)
+				mock.ServerVersionReturns(&version.Info{}, nil)
+				mock.MarshalReturns(nil, errTest)
 
 				return http.MethodGet
 			},

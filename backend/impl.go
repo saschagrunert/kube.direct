@@ -2,8 +2,9 @@ package function
 
 import (
 	"context"
-	"encoding/json"
+	"net/http"
 
+	"google.golang.org/protobuf/proto"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/version"
@@ -22,7 +23,8 @@ type impl interface {
 	NewDiscoveryClientForConfig(*rest.Config) (*discovery.DiscoveryClient, error)
 	ListNodes(context.Context, *kubernetes.Clientset) (*v1.NodeList, error)
 	ServerVersion(*discovery.DiscoveryClient) (*version.Info, error)
-	EncodeJSON(*json.Encoder, any) error
+	Marshal(proto.Message) ([]byte, error)
+	Write(http.ResponseWriter, []byte) (int, error)
 }
 
 func (*defaultImpl) InClusterConfig() (*rest.Config, error) {
@@ -45,6 +47,10 @@ func (*defaultImpl) ServerVersion(d *discovery.DiscoveryClient) (*version.Info, 
 	return d.ServerVersion()
 }
 
-func (*defaultImpl) EncodeJSON(e *json.Encoder, a any) error {
-	return e.Encode(a)
+func (*defaultImpl) Marshal(m proto.Message) ([]byte, error) {
+	return proto.Marshal(m)
+}
+
+func (*defaultImpl) Write(w http.ResponseWriter, b []byte) (int, error) {
+	return w.Write(b)
 }
