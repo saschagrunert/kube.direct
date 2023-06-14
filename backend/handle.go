@@ -31,7 +31,7 @@ func (h *Handler) Handle(ctx context.Context, res http.ResponseWriter, req *http
 		return
 	}
 
-	config, err := h.InClusterConfig()
+	config, err := h.ClusterConfig()
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 		return

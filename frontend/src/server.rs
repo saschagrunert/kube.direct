@@ -1,4 +1,7 @@
-use crate::{config, handler};
+use crate::{
+    config,
+    handler::{self, BACKEND_URL},
+};
 use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer};
 use actix_web_static_files::ResourceFiles;
 use anyhow::{Context, Result};
@@ -21,6 +24,12 @@ impl Server {
             Ok(v) => v.parse::<u16>().context("parse PORT env variable")?,
             Err(_) => 8080,
         };
+
+        #[cfg(feature = "local")]
+        info!(
+            "Running in local mode, expecting backend on {}",
+            BACKEND_URL
+        );
 
         info!("Serving on http://localhost:{}", port);
         HttpServer::new(|| {

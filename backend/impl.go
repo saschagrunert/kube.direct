@@ -3,6 +3,8 @@ package function
 import (
 	"context"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"google.golang.org/protobuf/proto"
 	v1 "k8s.io/api/core/v1"
@@ -11,6 +13,7 @@ import (
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 type defaultImpl struct{}
@@ -18,7 +21,7 @@ type defaultImpl struct{}
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
 //counterfeiter:generate . impl
 type impl interface {
-	InClusterConfig() (*rest.Config, error)
+	ClusterConfig() (*rest.Config, error)
 	NewForConfig(*rest.Config) (*kubernetes.Clientset, error)
 	NewDiscoveryClientForConfig(*rest.Config) (*discovery.DiscoveryClient, error)
 	ListNodes(context.Context, *kubernetes.Clientset) (*v1.NodeList, error)
@@ -27,8 +30,8 @@ type impl interface {
 	Write(http.ResponseWriter, []byte) (int, error)
 }
 
-func (*defaultImpl) InClusterConfig() (*rest.Config, error) {
-	return rest.InClusterConfig()
+func (*defaultImpl) ClusterConfig() (*rest.Config, error) {
+	return clientcmd.BuildConfigFromFlags("", filepath.Join(os.Getenv("HOME"), ".kube", "config"))
 }
 
 func (*defaultImpl) NewForConfig(c *rest.Config) (*kubernetes.Clientset, error) {
