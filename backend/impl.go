@@ -31,7 +31,14 @@ type impl interface {
 }
 
 func (*defaultImpl) ClusterConfig() (*rest.Config, error) {
-	return clientcmd.BuildConfigFromFlags("", filepath.Join(os.Getenv("HOME"), ".kube", "config"))
+	home := os.Getenv("HOME")
+	if home != "" {
+		kubeconfig := filepath.Join(home, ".kube", "config")
+		if _, err := os.Stat(kubeconfig); err == nil {
+			return clientcmd.BuildConfigFromFlags("", kubeconfig)
+		}
+	}
+	return rest.InClusterConfig()
 }
 
 func (*defaultImpl) NewForConfig(c *rest.Config) (*kubernetes.Clientset, error) {
