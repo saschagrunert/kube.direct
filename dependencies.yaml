@@ -25,3 +25,9 @@ dependencies:
     refPaths:
       - path: frontend/templates/static/uikit-icons.min.js
         match: UIkit
+
+  - name: protoc-gen-go
+    version: 1.30.0
+    refPaths:
+      - path: .github/generate-api
+        match: protoc-gen-go

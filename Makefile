@@ -26,3 +26,11 @@ $(BIN_DIR)/zeitgeist: $(BIN_DIR)
 .PHONY: verify-dependencies
 verify-dependencies: $(BIN_DIR)/zeitgeist
 	$(BIN_DIR)/zeitgeist validate --local-only --base-path . --config dependencies.yaml
+
+.PHONY: api
+api:
+	.github/generate-api
+
+.PHONY: verify-api
+verify-api: api
+	.github/tree-status

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "./api";
+
+package api;
+
+message Data {
+  uint32 nodes = 1;
+  string kubernetes_version = 2;
+  string os_image = 3;
+  string kernel_version = 4;
+  string container_runtime_version = 5;
+}
