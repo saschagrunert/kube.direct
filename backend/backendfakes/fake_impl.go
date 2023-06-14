@@ -3,9 +3,10 @@ package backendfakes
 
 import (
 	"context"
-	"encoding/json"
+	"net/http"
 	"sync"
 
+	"google.golang.org/protobuf/reflect/protoreflect"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/discovery"
@@ -14,18 +15,6 @@ import (
 )
 
 type FakeImpl struct {
-	EncodeJSONStub        func(*json.Encoder, any) error
-	encodeJSONMutex       sync.RWMutex
-	encodeJSONArgsForCall []struct {
-		arg1 *json.Encoder
-		arg2 any
-	}
-	encodeJSONReturns struct {
-		result1 error
-	}
-	encodeJSONReturnsOnCall map[int]struct {
-		result1 error
-	}
 	InClusterConfigStub        func() (*rest.Config, error)
 	inClusterConfigMutex       sync.RWMutex
 	inClusterConfigArgsForCall []struct {
@@ -50,6 +39,19 @@ type FakeImpl struct {
 	}
 	listNodesReturnsOnCall map[int]struct {
 		result1 *v1.NodeList
+		result2 error
+	}
+	MarshalStub        func(protoreflect.ProtoMessage) ([]byte, error)
+	marshalMutex       sync.RWMutex
+	marshalArgsForCall []struct {
+		arg1 protoreflect.ProtoMessage
+	}
+	marshalReturns struct {
+		result1 []byte
+		result2 error
+	}
+	marshalReturnsOnCall map[int]struct {
+		result1 []byte
 		result2 error
 	}
 	NewDiscoveryClientForConfigStub        func(*rest.Config) (*discovery.DiscoveryClient, error)
@@ -91,70 +93,22 @@ type FakeImpl struct {
 		result1 *version.Info
 		result2 error
 	}
+	WriteStub        func(http.ResponseWriter, []byte) (int, error)
+	writeMutex       sync.RWMutex
+	writeArgsForCall []struct {
+		arg1 http.ResponseWriter
+		arg2 []byte
+	}
+	writeReturns struct {
+		result1 int
+		result2 error
+	}
+	writeReturnsOnCall map[int]struct {
+		result1 int
+		result2 error
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
-}
-
-func (fake *FakeImpl) EncodeJSON(arg1 *json.Encoder, arg2 any) error {
-	fake.encodeJSONMutex.Lock()
-	ret, specificReturn := fake.encodeJSONReturnsOnCall[len(fake.encodeJSONArgsForCall)]
-	fake.encodeJSONArgsForCall = append(fake.encodeJSONArgsForCall, struct {
-		arg1 *json.Encoder
-		arg2 any
-	}{arg1, arg2})
-	stub := fake.EncodeJSONStub
-	fakeReturns := fake.encodeJSONReturns
-	fake.recordInvocation("EncodeJSON", []interface{}{arg1, arg2})
-	fake.encodeJSONMutex.Unlock()
-	if stub != nil {
-		return stub(arg1, arg2)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fakeReturns.result1
-}
-
-func (fake *FakeImpl) EncodeJSONCallCount() int {
-	fake.encodeJSONMutex.RLock()
-	defer fake.encodeJSONMutex.RUnlock()
-	return len(fake.encodeJSONArgsForCall)
-}
-
-func (fake *FakeImpl) EncodeJSONCalls(stub func(*json.Encoder, any) error) {
-	fake.encodeJSONMutex.Lock()
-	defer fake.encodeJSONMutex.Unlock()
-	fake.EncodeJSONStub = stub
-}
-
-func (fake *FakeImpl) EncodeJSONArgsForCall(i int) (*json.Encoder, any) {
-	fake.encodeJSONMutex.RLock()
-	defer fake.encodeJSONMutex.RUnlock()
-	argsForCall := fake.encodeJSONArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2
-}
-
-func (fake *FakeImpl) EncodeJSONReturns(result1 error) {
-	fake.encodeJSONMutex.Lock()
-	defer fake.encodeJSONMutex.Unlock()
-	fake.EncodeJSONStub = nil
-	fake.encodeJSONReturns = struct {
-		result1 error
-	}{result1}
-}
-
-func (fake *FakeImpl) EncodeJSONReturnsOnCall(i int, result1 error) {
-	fake.encodeJSONMutex.Lock()
-	defer fake.encodeJSONMutex.Unlock()
-	fake.EncodeJSONStub = nil
-	if fake.encodeJSONReturnsOnCall == nil {
-		fake.encodeJSONReturnsOnCall = make(map[int]struct {
-			result1 error
-		})
-	}
-	fake.encodeJSONReturnsOnCall[i] = struct {
-		result1 error
-	}{result1}
 }
 
 func (fake *FakeImpl) InClusterConfig() (*rest.Config, error) {
@@ -274,6 +228,70 @@ func (fake *FakeImpl) ListNodesReturnsOnCall(i int, result1 *v1.NodeList, result
 	}
 	fake.listNodesReturnsOnCall[i] = struct {
 		result1 *v1.NodeList
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeImpl) Marshal(arg1 protoreflect.ProtoMessage) ([]byte, error) {
+	fake.marshalMutex.Lock()
+	ret, specificReturn := fake.marshalReturnsOnCall[len(fake.marshalArgsForCall)]
+	fake.marshalArgsForCall = append(fake.marshalArgsForCall, struct {
+		arg1 protoreflect.ProtoMessage
+	}{arg1})
+	stub := fake.MarshalStub
+	fakeReturns := fake.marshalReturns
+	fake.recordInvocation("Marshal", []interface{}{arg1})
+	fake.marshalMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeImpl) MarshalCallCount() int {
+	fake.marshalMutex.RLock()
+	defer fake.marshalMutex.RUnlock()
+	return len(fake.marshalArgsForCall)
+}
+
+func (fake *FakeImpl) MarshalCalls(stub func(protoreflect.ProtoMessage) ([]byte, error)) {
+	fake.marshalMutex.Lock()
+	defer fake.marshalMutex.Unlock()
+	fake.MarshalStub = stub
+}
+
+func (fake *FakeImpl) MarshalArgsForCall(i int) protoreflect.ProtoMessage {
+	fake.marshalMutex.RLock()
+	defer fake.marshalMutex.RUnlock()
+	argsForCall := fake.marshalArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeImpl) MarshalReturns(result1 []byte, result2 error) {
+	fake.marshalMutex.Lock()
+	defer fake.marshalMutex.Unlock()
+	fake.MarshalStub = nil
+	fake.marshalReturns = struct {
+		result1 []byte
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeImpl) MarshalReturnsOnCall(i int, result1 []byte, result2 error) {
+	fake.marshalMutex.Lock()
+	defer fake.marshalMutex.Unlock()
+	fake.MarshalStub = nil
+	if fake.marshalReturnsOnCall == nil {
+		fake.marshalReturnsOnCall = make(map[int]struct {
+			result1 []byte
+			result2 error
+		})
+	}
+	fake.marshalReturnsOnCall[i] = struct {
+		result1 []byte
 		result2 error
 	}{result1, result2}
 }
@@ -470,21 +488,93 @@ func (fake *FakeImpl) ServerVersionReturnsOnCall(i int, result1 *version.Info, r
 	}{result1, result2}
 }
 
+func (fake *FakeImpl) Write(arg1 http.ResponseWriter, arg2 []byte) (int, error) {
+	var arg2Copy []byte
+	if arg2 != nil {
+		arg2Copy = make([]byte, len(arg2))
+		copy(arg2Copy, arg2)
+	}
+	fake.writeMutex.Lock()
+	ret, specificReturn := fake.writeReturnsOnCall[len(fake.writeArgsForCall)]
+	fake.writeArgsForCall = append(fake.writeArgsForCall, struct {
+		arg1 http.ResponseWriter
+		arg2 []byte
+	}{arg1, arg2Copy})
+	stub := fake.WriteStub
+	fakeReturns := fake.writeReturns
+	fake.recordInvocation("Write", []interface{}{arg1, arg2Copy})
+	fake.writeMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeImpl) WriteCallCount() int {
+	fake.writeMutex.RLock()
+	defer fake.writeMutex.RUnlock()
+	return len(fake.writeArgsForCall)
+}
+
+func (fake *FakeImpl) WriteCalls(stub func(http.ResponseWriter, []byte) (int, error)) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
+	fake.WriteStub = stub
+}
+
+func (fake *FakeImpl) WriteArgsForCall(i int) (http.ResponseWriter, []byte) {
+	fake.writeMutex.RLock()
+	defer fake.writeMutex.RUnlock()
+	argsForCall := fake.writeArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeImpl) WriteReturns(result1 int, result2 error) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
+	fake.WriteStub = nil
+	fake.writeReturns = struct {
+		result1 int
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeImpl) WriteReturnsOnCall(i int, result1 int, result2 error) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
+	fake.WriteStub = nil
+	if fake.writeReturnsOnCall == nil {
+		fake.writeReturnsOnCall = make(map[int]struct {
+			result1 int
+			result2 error
+		})
+	}
+	fake.writeReturnsOnCall[i] = struct {
+		result1 int
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeImpl) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.encodeJSONMutex.RLock()
-	defer fake.encodeJSONMutex.RUnlock()
 	fake.inClusterConfigMutex.RLock()
 	defer fake.inClusterConfigMutex.RUnlock()
 	fake.listNodesMutex.RLock()
 	defer fake.listNodesMutex.RUnlock()
+	fake.marshalMutex.RLock()
+	defer fake.marshalMutex.RUnlock()
 	fake.newDiscoveryClientForConfigMutex.RLock()
 	defer fake.newDiscoveryClientForConfigMutex.RUnlock()
 	fake.newForConfigMutex.RLock()
 	defer fake.newForConfigMutex.RUnlock()
 	fake.serverVersionMutex.RLock()
 	defer fake.serverVersionMutex.RUnlock()
+	fake.writeMutex.RLock()
+	defer fake.writeMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value
