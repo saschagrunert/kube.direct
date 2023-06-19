@@ -15,5 +15,21 @@ install_func() {
         tar xfz - -C /usr/local/bin
 }
 
+install_trunk() {
+    TRUNK_VERSION=0.16.0
+    curl_retry https://github.com/thedodd/trunk/releases/download/v$TRUNK_VERSION/trunk-x86_64-unknown-linux-gnu.tar.gz -o- |
+        tar xfz - -C /usr/local/bin
+    trunk --version
+}
+
+install_sass() {
+    SASS_VERSION=1.63.4
+    curl_retry https://github.com/sass/dart-sass/releases/download/$SASS_VERSION/dart-sass-$SASS_VERSION-linux-x64.tar.gz -o- |
+        tar xfz - -C /usr/local/bin --strip-components 1
+    sass --version
+}
+
 install_packages
 install_func
+install_trunk
+install_sass

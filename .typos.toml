@@ -1,6 +1,6 @@
 [files]
 extend-exclude = [
-    "frontend/templates/static",
+    "frontend/contrib",
 ]
 ignore-hidden = true
 ignore-files = true

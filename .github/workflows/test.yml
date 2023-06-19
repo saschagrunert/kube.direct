@@ -39,7 +39,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             frontend/target
-          key: ${{ runner.os }}-api-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-api-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/go.sum') }}
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -56,7 +56,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            frontend/target
+          key: ${{ runner.os }}-cargo-func-${{ hashFiles('**/Cargo.lock') }}
       - run: sudo .github/github-actions-setup
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+          target: wasm32-unknown-unknown
       - run: make build
         working-directory: frontend
 

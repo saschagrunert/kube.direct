@@ -23,7 +23,7 @@ dependencies:
   - name: uikit
     version: 3.16.19
     refPaths:
-      - path: frontend/templates/static/uikit-icons.min.js
+      - path: frontend/contrib/uikit-icons.min.js
         match: UIkit
 
   - name: protoc-gen-go
@@ -31,3 +31,15 @@ dependencies:
     refPaths:
       - path: .github/generate-api
         match: protoc-gen-go
+
+  - name: trunk
+    version: 0.16.0
+    refPaths:
+      - path: .github/github-actions-setup
+        match: TRUNK_VERSION
+
+  - name: sass
+    version: 1.63.4
+    refPaths:
+      - path: .github/github-actions-setup
+        match: SASS_VERSION
