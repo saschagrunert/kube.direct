@@ -1,54 +1,67 @@
-use crate::{
-    config,
-    handler::{self, BACKEND_URL},
-};
-use actix_web::{middleware::Logger, web, App, HttpResponse, HttpServer};
-use actix_web_static_files::ResourceFiles;
+use crate::App;
 use anyhow::{Context, Result};
-use env_logger::{Builder, Env};
-use log::info;
-use std::env;
+use bytes::Bytes;
+use futures::stream::{self, Stream, StreamExt};
+use std::{env, error::Error, path::PathBuf};
+use warp::{self, Filter};
+use yew::ServerRenderer;
 
-include!(concat!(env!("OUT_DIR"), "/generated.rs"));
+type BoxedError = Box<dyn Error + Send + Sync + 'static>;
 
-#[derive(Debug)]
-/// The main server structure.
 pub struct Server;
 
 impl Server {
-    /// Start the Server
-    pub async fn start() -> Result<()> {
-        Builder::from_env(Env::default().default_filter_or("info")).init();
+    pub async fn run() -> Result<()> {
+        const TARGET: &str = "server";
+        env::set_var("RUST_LOG", TARGET);
+        env_logger::init();
 
-        let port = match env::var("PORT") {
-            Ok(v) => v.parse::<u16>().context("parse PORT env variable")?,
-            Err(_) => 8080,
-        };
+        const BODY: &str = "<body>";
+        let dir = PathBuf::from("public");
 
-        #[cfg(feature = "local")]
-        info!(
-            "Running in local mode, expecting backend on {}",
-            BACKEND_URL
-        );
+        let index_html_s = tokio::fs::read_to_string(dir.join("index.html"))
+            .await
+            .context("read index")?;
 
-        info!("Serving on http://localhost:{}", port);
-        HttpServer::new(|| {
-            App::new()
-                .wrap(Logger::default())
-                .service(ResourceFiles::new("/static", generate()))
-                .configure(config::configure)
-                .route("/", web::get().to(handler::index))
-                .route("/", web::post().to(handler::index))
-                .route(
-                    "/health/{_:(readiness|liveness)}",
-                    web::get().to(HttpResponse::Ok),
-                )
-        })
-        .bind(("0.0.0.0", port))
-        .context("bind server IP and port")?
-        .workers(1)
-        .run()
-        .await
-        .context("run http server")
+        let (index_html_before, index_html_after) =
+            index_html_s.split_once(BODY).context("split index")?;
+        let mut index_html_before = index_html_before.to_owned();
+        index_html_before.push_str(BODY);
+        let index_html_after = index_html_after.to_owned();
+
+        let html = warp::path::end().then(move || {
+            let index_html_before = index_html_before.clone();
+            let index_html_after = index_html_after.clone();
+
+            async move { warp::reply::html(Self::render(index_html_before, index_html_after).await) }
+        });
+
+        let readiness = warp::path!("health" / "readiness").map(warp::reply);
+        let liveness = warp::path!("health" / "liveness").map(warp::reply);
+        let log = warp::log(TARGET);
+        let routes = html
+            .or(warp::fs::dir(dir))
+            .or(readiness)
+            .or(liveness)
+            .with(log);
+
+        println!("Serving at: http://localhost:8080/");
+        warp::serve(routes).run(([0, 0, 0, 0], 8080)).await;
+
+        Ok(())
+    }
+
+    async fn render(
+        index_html_before: String,
+        index_html_after: String,
+    ) -> Box<dyn Stream<Item = Result<Bytes, BoxedError>> + Send> {
+        let renderer = ServerRenderer::<App>::new();
+
+        Box::new(
+            stream::once(async move { index_html_before })
+                .chain(renderer.render_stream())
+                .chain(stream::once(async move { index_html_after }))
+                .map(|m| Result::<_, BoxedError>::Ok(m.into())),
+        )
     }
 }
