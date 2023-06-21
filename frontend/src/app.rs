@@ -63,26 +63,26 @@ fn Content() -> HtmlResult {
                 <h4>{"Cluster Details"}</h4>
                 <table class="uk-table uk-table-small uk-table-justify">
                     <tbody>
-                    <tr>
-                        <td>{ "Nodes" }</td>
-                        <td>{{ d.nodes }}</td>
-                    </tr>
-                    <tr>
-                        <td>{ "Kubernetes version" }</td>
-                        <td>{{ &d.kubernetes_version }}</td>
-                    </tr>
-                    <tr>
-                        <td>{ "OS image" }</td>
-                        <td>{{ &d.os_image }}</td>
-                    </tr>
-                    <tr>
-                        <td>{ "Kernel version" }</td>
-                        <td>{{ &d.kernel_version }}</td>
-                    </tr>
-                    <tr>
-                        <td>{ "Container runtime version" }</td>
-                        <td>{{ &d.container_runtime_version }}</td>
-                    </tr>
+                        <tr>
+                            <td>{ "Nodes" }</td>
+                            <td>{{ d.nodes }}</td>
+                        </tr>
+                        <tr>
+                            <td>{ "Kubernetes version" }</td>
+                            <td>{{ &d.kubernetes_version }}</td>
+                        </tr>
+                        <tr>
+                            <td>{ "OS image" }</td>
+                            <td>{{ &d.os_image }}</td>
+                        </tr>
+                        <tr>
+                            <td>{ "Kernel version" }</td>
+                            <td>{{ &d.kernel_version }}</td>
+                        </tr>
+                        <tr>
+                            <td>{ "Container runtime version" }</td>
+                            <td>{{ &d.container_runtime_version }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
