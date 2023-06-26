@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.6.2
 	github.com/stretchr/testify v1.8.4
-	google.golang.org/protobuf v1.30.0
+	google.golang.org/protobuf v1.31.0
 	k8s.io/api v0.27.3
 	k8s.io/apimachinery v0.27.3
 	k8s.io/client-go v0.27.3
