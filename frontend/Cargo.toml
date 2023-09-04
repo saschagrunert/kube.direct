@@ -26,7 +26,7 @@ gen-proto = ["dep:prost-build"]
 [dependencies]
 anyhow = "1.0.75"
 log = "0.4.20"
-prost = "0.11.9"
+prost = "0.12.0"
 reqwest = { version = "0.11.20", default-features = false, features = ["json"] }
 serde = { version = "1.0.188", features = ["derive"] }
 wasm-logger = "0.2.0"
