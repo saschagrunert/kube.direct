@@ -1,7 +1,7 @@
 ---
 dependencies:
   - name: go
-    version: 1.20
+    version: 1.21
     refPaths:
       - path: backend/go.mod
         match: go
@@ -33,13 +33,13 @@ dependencies:
         match: protoc-gen-go
 
   - name: trunk
-    version: 0.16.0
+    version: 0.17.5
     refPaths:
       - path: .github/github-actions-setup
         match: TRUNK_VERSION
 
   - name: sass
-    version: 1.63.4
+    version: 1.68.0
     refPaths:
       - path: .github/github-actions-setup
         match: SASS_VERSION
