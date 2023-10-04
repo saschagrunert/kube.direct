@@ -1,6 +1,6 @@
 module function
 
-go 1.20
+go 1.21
 
 require (
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.7.0
