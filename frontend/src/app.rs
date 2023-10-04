@@ -32,15 +32,12 @@ enum ReturnData {
 
 #[function_component]
 fn Content() -> HtmlResult {
-    let state = use_prepared_state!(
-        async move |_| -> ReturnData {
-            match fetch_data().await.context("fetch data") {
-                Err(e) => ReturnData::Error(format!("{:#}", e)),
-                Ok(d) => ReturnData::Data(d),
-            }
-        },
-        ()
-    )?
+    let state = use_prepared_state!((), async move |_| -> ReturnData {
+        match fetch_data().await.context("fetch data") {
+            Err(e) => ReturnData::Error(format!("{:#}", e)),
+            Ok(d) => ReturnData::Data(d),
+        }
+    })?
     .unwrap_or(Rc::new(ReturnData::Error(
         "unable to use prepared state".into(),
     )));
