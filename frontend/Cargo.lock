@@ -922,11 +922,11 @@ dependencies = [
 
 [[package]]
 name = "implicit-clone"
-version = "0.4.1"
+version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af3d77000817fd9e7db159e8d52ed9b5941a2cdbfbdc8ca646e59887ae2b2dd1"
+checksum = "7a50fed6f6aa778e7946f697a88e474b4b4a83fb0849cec1ac65fa8e869319dd"
 dependencies = [
- "indexmap 2.0.0",
+ "indexmap 1.9.3",
 ]
 
 [[package]]
